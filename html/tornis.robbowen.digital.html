@@ -1,0 +1,299 @@
+<html lang="en" class="no-js">
+<head>
+  <script>
+    document.querySelector('html').classList.add('js');
+    document.querySelector('html').classList.remove('no-js');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#3d6e6a">
+  
+  <title>Tornis | Watch and respond</title>
+  <meta name="description" content="Tornis is a minimal JavaScript library that helps you watch and respond to changes in your browser's viewport">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#2B2E6B">
+
+  <link rel="alternate" type="application/rss+xml" title="Links" href="/feed/links.xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://tornis.robbowen.digital/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://tornis.robbowen.digital/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://tornis.robbowen.digital/favicon-32x32.png">
+  <link rel="icon" type="image/png" href="https://tornis.robbowen.digital/android-chrome-192x192.png" sizes="192x192">
+  <link rel="icon" type="image/png" href="https://tornis.robbowen.digital/android-chrome-256x256.png" sizes="512x512">
+  <link rel="manifest" href="https://tornis.robbowen.digital/site.webmanifest">
+  <link rel="shortcut icon" href="https://tornis.robbowen.digital/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffffff">
+
+  <meta property="og:site_name" content="Tornis">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en-GB">
+  <meta property="og:url" content="https://tornis.robbowen.digital">
+  <meta property="og:title" content="Tornis | Watch and respond">
+  <meta property="og:description" content="Tornis is a minimal JavaScript library that helps you watch and respond to changes in your browser's viewport">
+  <meta property="og:image" content="https://tornis.robbowen.digital/icon.png">
+
+  <meta name="twitter:title" content="Tornis | Watch and respond">
+  <meta name="twitter:description" content="Tornis is a minimal JavaScript library that helps you watch and respond to changes in your browser's viewport">
+  <meta name="twitter:image" content="https://tornis.robbowen.digital/icon.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@robb0wen">
+
+  <link href="/css" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/prism.css">
+  <link rel="stylesheet" href="../styles/styles.min.css">
+</head>
+<body>
+
+  <img src="../images/tornislogo_outer.svg" alt="Watch and respond" class="logo-otr">
+  <img src="../images/tornislogo_inner.svg" alt="Tornis" class="logo">
+
+  <div class="content">
+    <h1 class="t-lielākais">Introducing Tornis.</h1>
+    <p>Taking its name from the forest watchtowers of Latvia, Tornis is a minimal JavaScript library that watches the state of your browser's viewport, allowing you to respond whenever something changes. <strong>Think of Tornis as a store for your viewport</strong>.</p>
+    <p>Tornis tracks state for:</p>
+    <ul>
+      <li>Mouse position <span class="highlight js-cursor-pos">0, 0</span></li>
+      <li>Mouse cursor velocity <span class="highlight js-cursor-vel">0, 0</span></li>
+      <li>Viewport size <span class="highlight js-size">0, 0</span></li>
+      <li>Scroll position <span class="highlight js-scroll-pos">0, 0</span></li>
+      <li>Scroll velocity <span class="highlight js-scroll-vel">0, 0</span></li>
+      <li>Browser position relative to the screen <span class="highlight js-window">0, 0</span></li>
+      <li>Browser velocity relative to the screen <span class="highlight js-window-vel">0, 0</span></li>
+      <li>Device orientation <span class="highlight js-device">0, 0, 0</span></li>
+      <li>Device pixel ratio</li>
+    </ul>
+    <p class="v-js">You can subscribe to store updates and combine these values to create all sorts of effects. For example, Tornis knows that you have seen <span class="highlight js-scroll-max">0%</span> of this page<span class="js-scroll-msg"> so far!</span></p>
+    <p class="v-nojs">You can subscribe to store updates and combine these values to create all sorts of effects. For example, if JavaScript was enabled Tornis would know how much of this page you have seen so far!</p>
+    
+    <h2 class="t-lielāks">When to use Tornis.</h2>
+    <p>First and foremost, <em>Tornis is not a parallax library</em>. It can of course be used to create parallax effects, but the library itself is concerned only with <em>tracking the state of your viewport</em>.</p>
+    <p>Whilst it is entirely possible to manually track everything in Tornis's store using standard JavaScript event handlers, it can become cumbersome to use them in combination. On top of that, binding complex event handlers to scroll or resize events, for example, can very quickly harm render performance.</p>
+    <p><strong>Tornis takes a deferred approach</strong>. Rather than bind directly to native events, Tornis throttles them and captures only the bare minimum - the updated values. An optimised render loop with the <strong>requestAnimationFrame</strong> api updates the store and provides the new state to any subscribed functions. This means that your code only runs when the store has changed, and when the browser is ready to render.</p>
+    
+    <h2 class="t-lielāks">Installation.</h2>
+    <p>Tornis can be installed from source on <a class="t-enkurs" href="../html/tornis.html" target="_blank">GitHub</a>, or from <a href="../html/tornis.html" target="_blank" class="t-enkurs">npm</a>. Npm is the preferred method. Open your project directory in your command line or terminal, then run: </p>
+    <pre><code class="language-c">
+      npm install tornis --save
+    </code></pre>
+    <p>Tornis is written in modern JavaScript with ES6, so <strong>you will need to transpile with babel if you are supporting legacy browsers</strong>.</p>
+
+    <h2 class="t-lielāks">The state object.</h2>
+    <p>The viewport state can be accessed at any time using the <strong>getViewportState()</strong> function. But the main focus is on watched functions.</p>
+    <p>You can subscribe a function to the Tornis store by passing it to the <strong>watchViewport()</strong> function. Tornis automatically runs this function whenever the viewport state changes. When it does, the updated viewport state object (seen below) is passed to the watched function as its first parameter.</p>
+    
+    <pre><code class="language-js">
+  {
+    scroll: {
+      changed: Boolean,
+      left: Integer,
+      right: Integer,
+      top: Integer,
+      bottom: Integer,
+      velocity: {
+        x: Integer,
+        y: Integer
+      }
+    },
+    size: {
+      changed: Boolean
+      x: Integer,
+      y: Integer,
+      docY: Integer
+    },
+    mouse: {
+      changed: Boolean,
+      x: Integer
+      y: Integer
+      velocity: {
+        x: Integer
+        y: Integer
+      }
+    },
+    position: {
+      changed: Boolean,
+      left: Integer,
+      right: Integer,
+      top: Integer,
+      bottom: Integer,
+      velocity: {
+        x: Integer,
+        y: Integer
+      }
+    },
+    orientation: {
+      changed: Boolean,
+      alpha: Integer,
+      beta: Integer,
+      gamma: Integer
+    },
+    devicePixelRatio: {
+      changed: Boolean,
+      ratio: Number
+    }
+  }
+    </code></pre>
+
+    <p>If its related properties have changed since the last state update, the nested <code>changed</code> properties will be individually set to <strong>true</strong>. This means that at any given update, you can test for what has and hasn't changed. You should use this to guard your code and ensure that updates only run when they're needed.</p> 
+    <p>You can see an example of this in the standard usage section.</p>
+
+    <h2 class="t-lielāks">A note on device orientation</h2>
+    <p>The <strong>deviceorientation</strong> API is currently in a state of flux, with the intention of full deprecation at some point in the future. However, as of publishing, it is still available. On Chrome, <strong>deviceorientation</strong> is deprecated over http, and you will require https for the events to fire. Similarly, on iOS, the API is now blocked behind a flag in the user's Safari settings. The user must enable 'motion and orientation access' for the events to fire.</p>
+    <p>Once the API is enabled, Tornis doesn't calculate device orientation values exactly as the device does. Instead it resolves for the user's natural resting position by storing the initial device position on page load. All subsequent values reported for alpha, beta and gamma are relative to this initially calibrated position. The function <strong>recalibrateOrientation()</strong> can be used to reset the default position. This function returns an object containing the previous, and incoming calibrated positions.</p>
+
+    <h2 class="t-lielāks">Standard usage.</h2>
+    <pre><code class="language-js">
+  // import the Tornis store functions
+  import { 
+    watchViewport, 
+    unwatchViewport, 
+    getViewportState
+  } from 'tornis';
+
+  // define a watched function, to be run on each update
+  const updateValues = ({ size, scroll, mouse, position, orientation, devicePixelRatio }) =&gt; {
+    if (size.changed) {
+      // do something related to size
+    }
+    
+    if (scroll.changed) {
+      // do something related to scroll position or velocity
+    }
+
+    if (mouse.changed) {
+      // do something related to mouse position or velocity
+    }
+
+    if (position.changed) {
+      // do something related to browser window position or velocity
+    }
+
+    if (orientation.changed) {
+      // do something related to device orientation
+    }
+
+    if (devicePixelRatio.changed) {
+      // do something related to pixel ratio
+    }
+  };
+
+  // bind the watch function
+  watchViewport(updateValues);
+
+  // when you want to stop updating
+  unwatchViewport(updateValues);
+
+  // to get a snapshot of the current viewport state
+  const state = getViewportState();
+    </code></pre>
+
+    <p>Any watched function will be automatically run whenever any of the associated properties change.</p>
+    <p>To see a further example of usage, view the source of this page.</p>
+
+    <h2 class="t-lielāks">Colophon.</h2>
+    <p>The animated forest and mist layers on this site are composite images based on the beautiful Unsplash photography of <a class="t-enkurs" href="../html/QnY0lML_jHw.html" target="_blank">Nicole Harrington</a>, <a class="t-enkurs" href="../html/rC8S0tOrzyM.html">Krists Luhaers</a> and <a class="t-enkurs" href="../html/QsWG0kjPQRY.html">Filip Zrnzević</a>.</p>
+    <p>The <a class="t-enkurs" href="../html/aOgHspY.html" target="_blank">technique of using CSS variables to scrub through animations</a> comes from <a class="t-enkurs" href="../html/ScottKellum.html" target="_blank">Scott Kellum</a>, whose parallax work is fantastic.</p>
+    <p>Lastly the typefaces are <a class="t-enkurs" href="../html/Lora.html" target="_blank">Lora</a> and <a class="t-enkurs" href="../html/Open+Sans.html">Open Sans</a>, both from Google Fonts.</p>
+
+    <small class="t-mazs">Tornis is made by <a class="t-enkurs" href="../html/robb0wen.html" target="_blank">Robb Owen</a>. The source is on <a class="t-enkurs" href="../html/tornis.html" target="_blank">GitHub</a> and is provided under the <a class="t-enkurs" href="../html/LICENSE.html" target="_blank">MIT license.</a></small>
+  </div>
+
+  <div class="wrap">
+    <div class="perspective">
+      <div class="trees trees--base"><div class="trees__inr"></div></div>
+      <div class="mist"></div>
+      <div class="trees trees--mid"><div class="trees__inr"></div></div>
+      <div class="trees trees--top"><div class="trees__inr"></div></div>
+      <div class="mist-front"></div>
+    </div>
+  </div>
+
+
+  <script src="../scripts/prism.js"></script>
+  <script src="../scripts/tornis.es5.js"></script>
+  <script>
+    const animateView = ({ size, scroll, mouse, orientation }) => {
+
+      // Update the zoom based on scroll position
+      if (scroll.changed) {
+        let scrollOffset = scroll.top / (size.docY - size.y);
+        
+        // clamp values
+        scrollOffset = scrollOffset < 0 ? 0 : scrollOffset;
+        scrollOffset = scrollOffset > 1 ? 1 : scrollOffset;
+        
+        // update scroll position CSS var
+        document.body.style.setProperty('--scrollY', scrollOffset);
+      }
+
+      // update the camera angle based on mouse position from center or device orientation
+      if (mouse.changed || orientation.changed) {
+        let xFromCenter;
+        let yFromCenter;
+
+        if (mouse.changed) {
+          xFromCenter = (mouse.x - size.x / 2) / (size.x / 2);
+          yFromCenter = (mouse.y - size.y / 2) / (size.y / 2);
+        }
+
+        if (orientation.changed) {
+          xFromCenter = orientation.gamma / 22.5;
+          yFromCenter = orientation.beta / 22.5;
+        }
+
+        // clamp values
+        xFromCenter = xFromCenter < -1 ? -1 : xFromCenter;
+        xFromCenter = xFromCenter > 1 ? 1 : xFromCenter;
+        yFromCenter = yFromCenter < -1 ? -1 : yFromCenter;
+        yFromCenter = yFromCenter > 1 ? 1 : yFromCenter;
+
+        // update scroll position CSS var
+        document.body.style.setProperty('--shiftX', xFromCenter);
+        document.body.style.setProperty('--shiftY', yFromCenter);
+      }
+
+    };
+
+
+    let maxScroll = 0;
+    const trackValues = ({ mouse, size, scroll, position, orientation }) => {
+      if (mouse.changed) {
+        document.querySelector('.js-cursor-pos').innerText = `${mouse.x}, ${mouse.y}`;
+        document.querySelector('.js-cursor-vel').innerText = `${mouse.velocity.x}, ${mouse.velocity.y}`;
+      }
+
+      if (size.changed) {
+        document.querySelector('.js-size').innerText = `${size.x}, ${size.y}`;
+      }
+
+      // Update the zoom based on scroll position
+      if (scroll.changed) {
+
+        document.querySelector('.js-scroll-pos').innerText = `${scroll.left}, ${scroll.top}`;
+        document.querySelector('.js-scroll-vel').innerText = `${scroll.velocity.x}, ${scroll.velocity.y}`;
+
+        let scrollOffset = Math.round((scroll.bottom / (size.docY)) * 100);
+        if (scrollOffset > maxScroll) {
+          maxScroll = scrollOffset > 100 ? 100 : scrollOffset;
+          document.querySelector('.js-scroll-max').innerText = `${maxScroll}%`;
+        }
+
+        if (maxScroll >= 95) {
+          document.querySelector('.js-scroll-msg').innerText = '. Thanks for reading!';
+        }
+      }
+
+      if (position.changed) {
+        document.querySelector('.js-window').innerText = `${position.left}, ${position.top}`;
+        document.querySelector('.js-window-vel').innerText = `${position.velocity.x}, ${position.velocity.y}`;
+      }
+
+      if (orientation.changed) {
+        document.querySelector('.js-device').innerText = `${orientation.alpha}, ${orientation.beta}, ${orientation.gamma}`;
+      }
+    };
+
+    __TORNIS.watchViewport(animateView);
+    __TORNIS.watchViewport(trackValues);
+  </script>
+</body>
+</html>
